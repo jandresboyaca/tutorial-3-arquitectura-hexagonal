@@ -29,15 +29,14 @@ def create_app(configuracion=None):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
      # Inicializa la DB
+    from aeroalpes.config import db as database
     from aeroalpes.config.db import init_db
     init_db(app)
 
-    from aeroalpes.config.db import db
-
-    importar_modelos_alchemy()
-
-    with app.app_context():
-        db.create_all()
+    if not (configuracion is not None and configuracion.get("TESTING")):
+        importar_modelos_alchemy()
+        with app.app_context():
+            database.db.create_all()
 
      # Importa Blueprints
     from . import cliente, hoteles, pagos, precios_dinamicos, vehiculos, vuelos
