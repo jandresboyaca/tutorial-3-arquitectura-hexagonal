@@ -1,6 +1,10 @@
 {
     "name": "AeroAlpes Codespace",
     "image": "mcr.microsoft.com/devcontainers/python:0-3.12",
-    "postCreateCommand": "pip install -r requirements.txt",
+    "features": {
+        "ghcr.io/devcontainers/features/pyenv:1": {}
+    },
+    "postCreateCommand": "pyenv install 3.12.10 -s && pyenv local 3.12.10 && pip install -r requirements.txt",
     "forwardPorts": [5000]
 }
+
