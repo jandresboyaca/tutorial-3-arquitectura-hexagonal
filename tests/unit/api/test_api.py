@@ -122,4 +122,4 @@ def test_reservar_vuelo(client):
 def test_reservar_vuelo_error_informacion_duplicada(client):
     rv = client.post('/vuelos/reserva', data=json.dumps(reserva_correcta()), content_type='application/json')
     assert rv is not None
-    assert rv.status_code == 500
+    assert rv.status_code == 409

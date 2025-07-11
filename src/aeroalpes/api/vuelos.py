@@ -23,7 +23,8 @@ def reservar():
 
         return map_reserva.dto_a_externo(dto_final)
     except ExcepcionDominio as e:
-        return Response(json.dumps(dict(error=str(e))), status=400, mimetype='application/json')
+        status = 409 if "ya existe" in str(e) else 400
+        return Response(json.dumps(dict(error=str(e))), status=status, mimetype='application/json')
 
 @bp.route('/reserva', methods=('GET',))
 @bp.route('/reserva/<id>', methods=('GET',))

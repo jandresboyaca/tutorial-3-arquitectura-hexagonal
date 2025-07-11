@@ -6,7 +6,12 @@ persistir objetos dominio (agregaciones) en la capa de infraestructura del domin
 """
 
 from aeroalpes.config.db import db
-from aeroalpes.modulos.vuelos.dominio.repositorios import RepositorioReservas, RepositorioProveedores
+from aeroalpes.modulos.vuelos.dominio.repositorios import (
+    RepositorioReservas,
+    RepositorioProveedores,
+)
+from aeroalpes.seedwork.dominio.excepciones import ExcepcionDominio
+from sqlalchemy.exc import IntegrityError
 from aeroalpes.modulos.vuelos.dominio.objetos_valor import NombreAero, Odo, Leg, Segmento, Itinerario, CodigoIATA
 from aeroalpes.modulos.vuelos.dominio.entidades import Proveedor, Aeropuerto, Reserva
 from aeroalpes.modulos.vuelos.dominio.fabricas import FabricaVuelos
@@ -64,7 +69,11 @@ class RepositorioReservasSQLite(RepositorioReservas):
     def agregar(self, reserva: Reserva):
         reserva_dto = self.fabrica_vuelos.crear_objeto(reserva, MapeadorReserva())
         db.session.add(reserva_dto)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            raise ExcepcionDominio("La reserva ya existe")
 
     def actualizar(self, reserva: Reserva):
         # TODO
